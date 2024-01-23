@@ -6,16 +6,7 @@ from functools import wraps
 x1, x2, y1, y2 = -1.8, 1.8, -1.8, 1.8
 c_real, c_imag = -0.62772, -.42193
 
-# decorator to time
-def timefn(fn):
-    @wraps(fn)
-    def measure_time(*args, **kwargs):
-        t1 = time.time()
-        result = fn(*args, **kwargs)
-        t2 = time.time()
-        print(f"@timefn: {fn.__name__} took {t2 - t1} seconds")
-        return result
-    return measure_time
+
 
 @timefn
 def calc_pure_python(desired_width, max_iterations):
