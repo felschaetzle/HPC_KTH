@@ -2,7 +2,7 @@
 import time
 from functools import wraps
 from memory_profiler import profile
-
+from CPUMonitor import CPUMonitor
 # area of complex space to investigate
 x1, x2, y1, y2 = -1.8, 1.8, -1.8, 1.8
 c_real, c_imag = -0.62772, -.42193
@@ -63,4 +63,9 @@ def calculate_z_serial_purepython(maxiter, zs, cs):
 if __name__ == "__main__":
     # Calculate the Julia set using a pure Python solution with
     # reasonable defaults for a laptop
+    csv_file_name = "julia_set.csv"
+    cpu_profiler = CPUMonitor(0.5, csv_file_name)
+    cpu_profiler.start()
     calc_pure_python(desired_width=100, max_iterations=300) 
+    cpu_profiler.stop()
+    cpu_profiler.plot()

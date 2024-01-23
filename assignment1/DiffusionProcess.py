@@ -1,7 +1,8 @@
+from CPUMonitor import CPUMonitor
 
-grid_shape = (64, 64)
+grid_shape = (640, 640)
 
-@profile
+# @profile
 def evolve(grid, dt, D=1.0):
     xmax, ymax = grid_shape
     new_grid = [[0.0] * ymax for x in range(xmax)]
@@ -16,7 +17,7 @@ def evolve(grid, dt, D=1.0):
             new_grid[i][j] = grid[i][j] + D * (grid_xx + grid_yy) * dt
     return new_grid
 
-@profile
+# @profile
 def run_experiment(num_iterations):
     # Setting up initial conditions 
     xmax, ymax = grid_shape
@@ -35,4 +36,12 @@ def run_experiment(num_iterations):
         grid = evolve(grid, 0.1)
 
 if __name__ == "__main__":
-    run_experiment(5)
+
+
+
+    csv_file_name = "diffusion_process.csv"
+    cpu_profiler = CPUMonitor(0.5, csv_file_name)
+    cpu_profiler.start()
+    run_experiment(50)
+    cpu_profiler.stop()
+    cpu_profiler.plot()
