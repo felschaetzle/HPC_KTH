@@ -39,8 +39,8 @@ if __name__ == "__main__":
 
 
 
-    csv_file_name = "diffusion_process.csv"
-    cpu_profiler = CPUMonitor(0.5, csv_file_name)
+    file_name = "diffusion_process"
+    cpu_profiler = CPUMonitor(0.5, file_name)
     cpu_profiler.start()
     run_experiment(50)
     cpu_profiler.stop()

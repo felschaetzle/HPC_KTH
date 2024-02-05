@@ -6,12 +6,12 @@ import pandas as pd
 import numpy as np
 
 class CPUMonitor:
-    def __init__(self, interval, csv_file_name):
+    def __init__(self, interval, file_name):
         self.interval = interval
         self.cpu_data = {i: [] for i in range(psutil.cpu_count())}
         # self.lock = threading.Lock()
         self.interval = interval
-        self.csv_file_name = csv_file_name
+        self.file_name = file_name
 
     def monitor_cpu_usage(self):
         # Monitor CPU usage
@@ -46,13 +46,14 @@ class CPUMonitor:
         # Wait for the monitoring thread to finish
         self.thread.join()
 
-        # # Plot CPU usage
+        # Plot CPU usage and save image
         for i, data in self.cpu_data.items():
             plt.plot(data, label=f'CPU {i}')
         plt.xlabel('Time (s)')
         plt.ylabel('CPU Usage (%)')
         plt.legend()
-        plt.show()
+        plt.title(f"CPU usage during runtime of {self.file_name}")
+        plt.savefig(f"{self.file_name}.png")
 
         # Print summary table
         for i, data in self.cpu_data.items():
@@ -63,7 +64,7 @@ class CPUMonitor:
         print(df.columns)
         end_time = len(df[0]) * self.interval
         df["time_stamp"] = np.arange(0,end_time, self.interval)
-        df.to_csv(self.csv_file_name, index=False)
+        df.to_csv(f"{self.file_name}.csv", index=False)
         print(df)
 # # Monitor CPU usage for 20 seconds, updating every second
 # monitor = CPUMonitor(1)
