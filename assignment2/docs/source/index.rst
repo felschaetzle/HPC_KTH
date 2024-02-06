@@ -10,6 +10,8 @@ Welcome to DD2358 Conway's Game of Life Optimization's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+    index
+    conway
 
 
 Indices and tables

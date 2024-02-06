@@ -81,6 +81,7 @@ def update(frameNum, img, grid, N):
     grid[:] = newGrid[:]
     return img,
 
+
 def update_standard(grid, N):
     """update grid without visualizing it"""
     newGrid = grid.copy()
@@ -157,7 +158,7 @@ def main():
 def simulate():
     """ simulate different grid sizes for profiling purposes """
 
-    grid_sizes = [32, 64, 128] #, 256, 512]
+    grid_sizes = [32, 64, 128, 256, 512]
     iterations = 10
     standard_times = []
     optimized_times = []
@@ -178,12 +179,12 @@ def simulate():
         optimized_times.append(timer() - t)
 
     plt.plot(range(len(grid_sizes)), standard_times, label="Standard update")
-    plt.plot(range(len(grid_sizes)), optimized_times, label="Optimized update")
+    #plt.plot(range(len(grid_sizes)), optimized_times, label="Optimized update")
     plt.legend()
     plt.xticks(range(len(grid_sizes)), labels=grid_sizes)
     plt.xlabel("Grid sizes")
     plt.ylabel("Runtime (s)")
-    plt.show()
+    plt.savefig("conway_standard.png")
 
 # call main
 if __name__ == '__main__':
