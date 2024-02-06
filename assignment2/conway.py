@@ -1,4 +1,3 @@
-
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 """
@@ -11,7 +10,7 @@ Author: Mahesh Venkitachalam
 
 import sys, argparse
 import numpy as np
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from timeit import default_timer as timer
 from scipy import signal
@@ -20,20 +19,21 @@ ON = 255
 OFF = 0
 vals = [ON, OFF]
 
+
 def randomGrid(N):
     """returns a grid of NxN random values"""
-    return np.random.choice(vals, N*N, p=[0.2, 0.8]).reshape(N, N)
+    return np.random.choice(vals, N * N, p=[0.2, 0.8]).reshape(N, N)
+
 
 def addGlider(i, j, grid):
     """adds a glider with top left cell at (i, j)"""
-    glider = np.array([[0,    0, 255], 
-                       [255,  0, 255], 
-                       [0,  255, 255]])
-    grid[i:i+3, j:j+3] = glider
+    glider = np.array([[0, 0, 255], [255, 0, 255], [0, 255, 255]])
+    grid[i : i + 3, j : j + 3] = glider
+
 
 def addGosperGliderGun(i, j, grid):
     """adds a Gosper Glider Gun with top left cell at (i, j)"""
-    gun = np.zeros(11*38).reshape(11, 38)
+    gun = np.zeros(11 * 38).reshape(11, 38)
 
     gun[5][1] = gun[5][2] = 255
     gun[6][1] = gun[6][2] = 255
@@ -57,23 +57,33 @@ def addGosperGliderGun(i, j, grid):
     gun[3][35] = gun[3][36] = 255
     gun[4][35] = gun[4][36] = 255
 
-    grid[i:i+11, j:j+38] = gun
+    grid[i : i + 11, j : j + 38] = gun
+
 
 def update(frameNum, img, grid, N):
     # copy grid since we require 8 neighbors for calculation
-    # and we go line by line 
+    # and we go line by line
     newGrid = grid.copy()
     for i in range(N):
         for j in range(N):
             # compute 8-neighbor sum
-            # using toroidal boundary conditions - x and y wrap around 
+            # using toroidal boundary conditions - x and y wrap around
             # so that the simulaton takes place on a toroidal surface.
-            total = int((grid[i, (j-1)%N] + grid[i, (j+1)%N] + 
-                         grid[(i-1)%N, j] + grid[(i+1)%N, j] + 
-                         grid[(i-1)%N, (j-1)%N] + grid[(i-1)%N, (j+1)%N] + 
-                         grid[(i+1)%N, (j-1)%N] + grid[(i+1)%N, (j+1)%N])/255)
+            total = int(
+                (
+                    grid[i, (j - 1) % N]
+                    + grid[i, (j + 1) % N]
+                    + grid[(i - 1) % N, j]
+                    + grid[(i + 1) % N, j]
+                    + grid[(i - 1) % N, (j - 1) % N]
+                    + grid[(i - 1) % N, (j + 1) % N]
+                    + grid[(i + 1) % N, (j - 1) % N]
+                    + grid[(i + 1) % N, (j + 1) % N]
+                )
+                / 255
+            )
             # apply Conway's rules
-            if grid[i, j]  == ON:
+            if grid[i, j] == ON:
                 if (total < 2) or (total > 3):
                     newGrid[i, j] = OFF
             else:
@@ -82,21 +92,31 @@ def update(frameNum, img, grid, N):
     # update data
     img.set_data(newGrid)
     grid[:] = newGrid[:]
-    return img,
+    return (img,)
 
-#@profile
+
+# @profile
 def update_standard(grid, N):
     """update grid without visualizing it"""
     newGrid = grid.copy()
     for i in range(N):
         for j in range(N):
             # compute 8-neighbor sum
-            total = int((grid[i, (j-1)%N] + grid[i, (j+1)%N] + 
-                         grid[(i-1)%N, j] + grid[(i+1)%N, j] + 
-                         grid[(i-1)%N, (j-1)%N] + grid[(i-1)%N, (j+1)%N] + 
-                         grid[(i+1)%N, (j-1)%N] + grid[(i+1)%N, (j+1)%N])/255)
+            total = int(
+                (
+                    grid[i, (j - 1) % N]
+                    + grid[i, (j + 1) % N]
+                    + grid[(i - 1) % N, j]
+                    + grid[(i + 1) % N, j]
+                    + grid[(i - 1) % N, (j - 1) % N]
+                    + grid[(i - 1) % N, (j + 1) % N]
+                    + grid[(i + 1) % N, (j - 1) % N]
+                    + grid[(i + 1) % N, (j + 1) % N]
+                )
+                / 255
+            )
             # apply Conway's rules
-            if grid[i, j]  == ON:
+            if grid[i, j] == ON:
                 if (total < 2) or (total > 3):
                     newGrid[i, j] = OFF
             else:
@@ -106,28 +126,32 @@ def update_standard(grid, N):
     grid[:] = newGrid[:]
     return newGrid
 
-#@profile
+
+# @profile
 def update_optimized(grid, N):
     """update grid in an optimized way"""
 
     newGrid = grid.copy()
 
-    #calculate number of neighbors by 2d convolution
+    # calculate number of neighbors by 2d convolution
     neighbors = np.zeros_like(grid)
 
-    filter = np.array([[1, 1, 1],
-                       [1, 0, 1], 
-                       [1, 1, 1]])
+    filter = np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]])
 
-    neighbors = (signal.convolve2d(grid, filter, mode='same', boundary='wrap')/255).astype(np.int32)
+    neighbors = (
+        signal.convolve2d(grid, filter, mode="same", boundary="wrap") / 255
+    ).astype(np.int32)
 
     # aplly conway's rules
-    newGrid[np.logical_and(grid == 255, np.logical_or((neighbors < 2), (neighbors > 3)))] = 0
+    newGrid[
+        np.logical_and(grid == 255, np.logical_or((neighbors < 2), (neighbors > 3)))
+    ] = 0
     newGrid[neighbors == 3] = 255
 
-    #update data                
+    # update data
     grid[:] = newGrid
     return newGrid
+
 
 def test():
     grid_size = 100
@@ -138,12 +162,12 @@ def test():
 
     if np.array_equal(grid_standard, grid_optimized):
         print("success")
-    else: 
+    else:
         print("grids don't match")
 
 
 def simulate():
-    """ simulate different grid sizes for profiling purposes """
+    """simulate different grid sizes for profiling purposes"""
 
     grid_sizes = [32, 64, 128, 256, 512]
     iterations = 10
@@ -153,13 +177,13 @@ def simulate():
     for grid_size in grid_sizes:
         grid = randomGrid(grid_size)
 
-        #time standard update function
+        # time standard update function
         t = timer()
         for i in range(iterations):
             grid = update_standard(grid, grid_size)
         standard_times.append(timer() - t)
 
-        #time optimized update function
+        # time optimized update function
         t = timer()
         for i in range(iterations):
             grid = update_optimized(grid, grid_size)
@@ -173,25 +197,28 @@ def simulate():
     plt.ylabel("Runtime (s)")
     plt.savefig("conway_optimized.png")
 
+
 # main() function
 def main():
     # Command line args are in sys.argv[1], sys.argv[2] ..
     # sys.argv[0] is the script name itself and can be ignored
     # parse arguments
-    parser = argparse.ArgumentParser(description="Runs Conway's Game of Life simulation.")
-  # add arguments
-    parser.add_argument('--grid-size', dest='N', required=False)
-    parser.add_argument('--mov-file', dest='movfile', required=False)
-    parser.add_argument('--interval', dest='interval', required=False)
-    parser.add_argument('--glider', action='store_true', required=False)
-    parser.add_argument('--gosper', action='store_true', required=False)
+    parser = argparse.ArgumentParser(
+        description="Runs Conway's Game of Life simulation."
+    )
+    # add arguments
+    parser.add_argument("--grid-size", dest="N", required=False)
+    parser.add_argument("--mov-file", dest="movfile", required=False)
+    parser.add_argument("--interval", dest="interval", required=False)
+    parser.add_argument("--glider", action="store_true", required=False)
+    parser.add_argument("--gosper", action="store_true", required=False)
     args = parser.parse_args()
-    
+
     # set grid size
     N = 100
     if args.N and int(args.N) > 8:
         N = int(args.N)
-        
+
     # set animation update interval
     updateInterval = 50
     if args.interval:
@@ -201,10 +228,10 @@ def main():
     grid = np.array([])
     # check if "glider" demo flag is specified
     if args.glider:
-        grid = np.zeros(N*N).reshape(N, N)
+        grid = np.zeros(N * N).reshape(N, N)
         addGlider(1, 1, grid)
     elif args.gosper:
-        grid = np.zeros(N*N).reshape(N, N)
+        grid = np.zeros(N * N).reshape(N, N)
         addGosperGliderGun(10, 10, grid)
     else:
         # populate grid with random on/off - more off than on
@@ -212,21 +239,30 @@ def main():
 
     # set up animation
     fig, ax = plt.subplots()
-    img = ax.imshow(grid, interpolation='nearest')
-    ani = animation.FuncAnimation(fig, update, fargs=(img, grid, N, ),
-                                  frames = 10,
-                                  interval=updateInterval,
-                                  save_count=50)
+    img = ax.imshow(grid, interpolation="nearest")
+    ani = animation.FuncAnimation(
+        fig,
+        update,
+        fargs=(
+            img,
+            grid,
+            N,
+        ),
+        frames=10,
+        interval=updateInterval,
+        save_count=50,
+    )
 
-    # # of frames? 
+    # # of frames?
     # set output file
     if args.movfile:
-        ani.save(args.movfile, fps=30, extra_args=['-vcodec', 'libx264'])
+        ani.save(args.movfile, fps=30, extra_args=["-vcodec", "libx264"])
 
     plt.show()
 
+
 # call main
-if __name__ == '__main__':
-    #main()
+if __name__ == "__main__":
+    # main()
     simulate()
-    #test()
+    # test()
