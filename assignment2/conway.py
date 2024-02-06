@@ -127,7 +127,7 @@ def update_standard(grid, N):
     return newGrid
 
 
-@profile
+#@profile
 def update_optimized(grid, N):
     """update grid in an optimized way"""
 
@@ -153,17 +153,14 @@ def update_optimized(grid, N):
     return newGrid
 
 
-def test():
+def test_output():
     grid_size = 100
     grid1 = randomGrid(grid_size)
     grid2 = grid1.copy()
     grid_optimized = update_optimized(grid1, grid_size)
     grid_standard = update_standard(grid2, grid_size)
 
-    if np.array_equal(grid_standard, grid_optimized):
-        print("success")
-    else:
-        print("grids don't match")
+    assert(np.array_equal(grid_standard, grid_optimized))
 
 
 def simulate():
