@@ -1,4 +1,6 @@
 
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
 """
 conway.py 
 
@@ -12,6 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import matplotlib.animation as animation
 from timeit import default_timer as timer
+from scipy import signal
 
 ON = 255
 OFF = 0
@@ -62,7 +65,7 @@ def update(frameNum, img, grid, N):
     newGrid = grid.copy()
     for i in range(N):
         for j in range(N):
-            # compute 8-neghbor sum
+            # compute 8-neighbor sum
             # using toroidal boundary conditions - x and y wrap around 
             # so that the simulaton takes place on a toroidal surface.
             total = int((grid[i, (j-1)%N] + grid[i, (j+1)%N] + 
@@ -81,13 +84,13 @@ def update(frameNum, img, grid, N):
     grid[:] = newGrid[:]
     return img,
 
-
+#@profile
 def update_standard(grid, N):
     """update grid without visualizing it"""
     newGrid = grid.copy()
     for i in range(N):
         for j in range(N):
-            # compute 8-neghbor sum
+            # compute 8-neighbor sum
             total = int((grid[i, (j-1)%N] + grid[i, (j+1)%N] + 
                          grid[(i-1)%N, j] + grid[(i+1)%N, j] + 
                          grid[(i-1)%N, (j-1)%N] + grid[(i-1)%N, (j+1)%N] + 
@@ -102,6 +105,73 @@ def update_standard(grid, N):
     # update data
     grid[:] = newGrid[:]
     return newGrid
+
+#@profile
+def update_optimized(grid, N):
+    """update grid in an optimized way"""
+
+    newGrid = grid.copy()
+
+    #calculate number of neighbors by 2d convolution
+    neighbors = np.zeros_like(grid)
+
+    filter = np.array([[1, 1, 1],
+                       [1, 0, 1], 
+                       [1, 1, 1]])
+
+    neighbors = (signal.convolve2d(grid, filter, mode='same', boundary='wrap')/255).astype(np.int32)
+
+    # aplly conway's rules
+    newGrid[np.logical_and(grid == 255, np.logical_or((neighbors < 2), (neighbors > 3)))] = 0
+    newGrid[neighbors == 3] = 255
+
+    #update data                
+    grid[:] = newGrid
+    return newGrid
+
+def test():
+    grid_size = 100
+    grid1 = randomGrid(grid_size)
+    grid2 = grid1.copy()
+    grid_optimized = update_optimized(grid1, grid_size)
+    grid_standard = update_standard(grid2, grid_size)
+
+    if np.array_equal(grid_standard, grid_optimized):
+        print("success")
+    else: 
+        print("grids don't match")
+
+
+def simulate():
+    """ simulate different grid sizes for profiling purposes """
+
+    grid_sizes = [32, 64, 128, 256, 512]
+    iterations = 10
+    standard_times = []
+    optimized_times = []
+
+    for grid_size in grid_sizes:
+        grid = randomGrid(grid_size)
+
+        #time standard update function
+        t = timer()
+        for i in range(iterations):
+            grid = update_standard(grid, grid_size)
+        standard_times.append(timer() - t)
+
+        #time optimized update function
+        t = timer()
+        for i in range(iterations):
+            grid = update_optimized(grid, grid_size)
+        optimized_times.append(timer() - t)
+
+    plt.plot(range(len(grid_sizes)), standard_times, label="Standard update")
+    plt.plot(range(len(grid_sizes)), optimized_times, label="Optimized update")
+    plt.legend()
+    plt.xticks(range(len(grid_sizes)), labels=grid_sizes)
+    plt.xlabel("Grid sizes")
+    plt.ylabel("Runtime (s)")
+    plt.savefig("conway_optimized.png")
 
 # main() function
 def main():
@@ -155,38 +225,8 @@ def main():
 
     plt.show()
 
-def simulate():
-    """ simulate different grid sizes for profiling purposes """
-
-    grid_sizes = [32, 64, 128, 256, 512]
-    iterations = 10
-    standard_times = []
-    optimized_times = []
-
-    for grid_size in grid_sizes:
-        grid = randomGrid(grid_size)
-
-        #time standard update function
-        t = timer()
-        for i in range(iterations):
-            grid = update_standard(grid, grid_size)
-        standard_times.append(timer() - t)
-
-        #time optimized update function
-        t = timer()
-        for i in range(iterations):
-            grid = update_standard(grid, grid_size)
-        optimized_times.append(timer() - t)
-
-    plt.plot(range(len(grid_sizes)), standard_times, label="Standard update")
-    #plt.plot(range(len(grid_sizes)), optimized_times, label="Optimized update")
-    plt.legend()
-    plt.xticks(range(len(grid_sizes)), labels=grid_sizes)
-    plt.xlabel("Grid sizes")
-    plt.ylabel("Runtime (s)")
-    plt.savefig("conway_standard.png")
-
 # call main
 if __name__ == '__main__':
     #main()
     simulate()
+    #test()
