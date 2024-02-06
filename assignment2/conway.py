@@ -175,10 +175,10 @@ def simulate():
         grid = randomGrid(grid_size)
 
         # time standard update function
-        # t = timer()
-        # for i in range(iterations):
-        #     grid = update_standard(grid, grid_size)
-        # standard_times.append(timer() - t)
+        t = timer()
+        for i in range(iterations):
+            grid = update_standard(grid, grid_size)
+        standard_times.append(timer() - t)
 
         # time optimized update function
         t = timer()
@@ -186,7 +186,7 @@ def simulate():
             grid = update_optimized(grid, grid_size)
         optimized_times.append(timer() - t)
 
-    # plt.plot(range(len(grid_sizes)), standard_times, label="Standard update")
+    plt.plot(range(len(grid_sizes)), standard_times, label="Standard update")
     plt.plot(range(len(grid_sizes)), optimized_times, label="Optimized update")
     plt.legend()
     plt.xticks(range(len(grid_sizes)), labels=grid_sizes)
