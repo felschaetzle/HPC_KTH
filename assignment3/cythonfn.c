@@ -1969,7 +1969,7 @@ static const char __pyx_k_b[] = "b";
 static const char __pyx_k_c[] = "c";
 static const char __pyx_k_i[] = "i";
 static const char __pyx_k_j[] = "j";
-static const char __pyx_k__8[] = "?";
+static const char __pyx_k__9[] = "?";
 static const char __pyx_k_sum[] = "sum";
 static const char __pyx_k_copy[] = "copy";
 static const char __pyx_k_main[] = "__main__";
@@ -1980,6 +1980,7 @@ static const char __pyx_k_scale[] = "scale";
 static const char __pyx_k_triad[] = "triad";
 static const char __pyx_k_cythonfn[] = "cythonfn";
 static const char __pyx_k_array_size[] = "array_size";
+static const char __pyx_k_free_arrays[] = "free_arrays";
 static const char __pyx_k_init_arrays[] = "init_arrays";
 static const char __pyx_k_cythonfn_pyx[] = "cythonfn.pyx";
 static const char __pyx_k_is_coroutine[] = "_is_coroutine";
@@ -1991,6 +1992,7 @@ static PyObject *__pyx_pf_8cythonfn_2copy(CYTHON_UNUSED PyObject *__pyx_self, in
 static PyObject *__pyx_pf_8cythonfn_4sum(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_array_size); /* proto */
 static PyObject *__pyx_pf_8cythonfn_6scale(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_array_size); /* proto */
 static PyObject *__pyx_pf_8cythonfn_8triad(CYTHON_UNUSED PyObject *__pyx_self, int __pyx_v_array_size); /* proto */
+static PyObject *__pyx_pf_8cythonfn_10free_arrays(CYTHON_UNUSED PyObject *__pyx_self); /* proto */
 /* #### Code section: late_includes ### */
 /* #### Code section: module_state ### */
 typedef struct {
@@ -2024,7 +2026,7 @@ typedef struct {
   #endif
   #if CYTHON_USE_MODULE_STATE
   #endif
-  PyObject *__pyx_n_s__8;
+  PyObject *__pyx_n_s__9;
   PyObject *__pyx_n_s_a;
   PyObject *__pyx_n_s_array_size;
   PyObject *__pyx_n_s_asyncio_coroutines;
@@ -2034,6 +2036,7 @@ typedef struct {
   PyObject *__pyx_n_s_copy;
   PyObject *__pyx_n_s_cythonfn;
   PyObject *__pyx_kp_s_cythonfn_pyx;
+  PyObject *__pyx_n_s_free_arrays;
   PyObject *__pyx_n_s_i;
   PyObject *__pyx_n_s_init_arrays;
   PyObject *__pyx_n_s_is_coroutine;
@@ -2052,6 +2055,7 @@ typedef struct {
   PyObject *__pyx_codeobj__5;
   PyObject *__pyx_codeobj__6;
   PyObject *__pyx_codeobj__7;
+  PyObject *__pyx_codeobj__8;
 } __pyx_mstate;
 
 #if CYTHON_USE_MODULE_STATE
@@ -2094,7 +2098,7 @@ static int __pyx_m_clear(PyObject *m) {
   #ifdef __Pyx_FusedFunction_USED
   Py_CLEAR(clear_module_state->__pyx_FusedFunctionType);
   #endif
-  Py_CLEAR(clear_module_state->__pyx_n_s__8);
+  Py_CLEAR(clear_module_state->__pyx_n_s__9);
   Py_CLEAR(clear_module_state->__pyx_n_s_a);
   Py_CLEAR(clear_module_state->__pyx_n_s_array_size);
   Py_CLEAR(clear_module_state->__pyx_n_s_asyncio_coroutines);
@@ -2104,6 +2108,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_n_s_copy);
   Py_CLEAR(clear_module_state->__pyx_n_s_cythonfn);
   Py_CLEAR(clear_module_state->__pyx_kp_s_cythonfn_pyx);
+  Py_CLEAR(clear_module_state->__pyx_n_s_free_arrays);
   Py_CLEAR(clear_module_state->__pyx_n_s_i);
   Py_CLEAR(clear_module_state->__pyx_n_s_init_arrays);
   Py_CLEAR(clear_module_state->__pyx_n_s_is_coroutine);
@@ -2122,6 +2127,7 @@ static int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_codeobj__5);
   Py_CLEAR(clear_module_state->__pyx_codeobj__6);
   Py_CLEAR(clear_module_state->__pyx_codeobj__7);
+  Py_CLEAR(clear_module_state->__pyx_codeobj__8);
   return 0;
 }
 #endif
@@ -2142,7 +2148,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   #ifdef __Pyx_FusedFunction_USED
   Py_VISIT(traverse_module_state->__pyx_FusedFunctionType);
   #endif
-  Py_VISIT(traverse_module_state->__pyx_n_s__8);
+  Py_VISIT(traverse_module_state->__pyx_n_s__9);
   Py_VISIT(traverse_module_state->__pyx_n_s_a);
   Py_VISIT(traverse_module_state->__pyx_n_s_array_size);
   Py_VISIT(traverse_module_state->__pyx_n_s_asyncio_coroutines);
@@ -2152,6 +2158,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_n_s_copy);
   Py_VISIT(traverse_module_state->__pyx_n_s_cythonfn);
   Py_VISIT(traverse_module_state->__pyx_kp_s_cythonfn_pyx);
+  Py_VISIT(traverse_module_state->__pyx_n_s_free_arrays);
   Py_VISIT(traverse_module_state->__pyx_n_s_i);
   Py_VISIT(traverse_module_state->__pyx_n_s_init_arrays);
   Py_VISIT(traverse_module_state->__pyx_n_s_is_coroutine);
@@ -2170,6 +2177,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
   Py_VISIT(traverse_module_state->__pyx_codeobj__5);
   Py_VISIT(traverse_module_state->__pyx_codeobj__6);
   Py_VISIT(traverse_module_state->__pyx_codeobj__7);
+  Py_VISIT(traverse_module_state->__pyx_codeobj__8);
   return 0;
 }
 #endif
@@ -2204,7 +2212,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #endif
 #if CYTHON_USE_MODULE_STATE
 #endif
-#define __pyx_n_s__8 __pyx_mstate_global->__pyx_n_s__8
+#define __pyx_n_s__9 __pyx_mstate_global->__pyx_n_s__9
 #define __pyx_n_s_a __pyx_mstate_global->__pyx_n_s_a
 #define __pyx_n_s_array_size __pyx_mstate_global->__pyx_n_s_array_size
 #define __pyx_n_s_asyncio_coroutines __pyx_mstate_global->__pyx_n_s_asyncio_coroutines
@@ -2214,6 +2222,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_n_s_copy __pyx_mstate_global->__pyx_n_s_copy
 #define __pyx_n_s_cythonfn __pyx_mstate_global->__pyx_n_s_cythonfn
 #define __pyx_kp_s_cythonfn_pyx __pyx_mstate_global->__pyx_kp_s_cythonfn_pyx
+#define __pyx_n_s_free_arrays __pyx_mstate_global->__pyx_n_s_free_arrays
 #define __pyx_n_s_i __pyx_mstate_global->__pyx_n_s_i
 #define __pyx_n_s_init_arrays __pyx_mstate_global->__pyx_n_s_init_arrays
 #define __pyx_n_s_is_coroutine __pyx_mstate_global->__pyx_n_s_is_coroutine
@@ -2232,6 +2241,7 @@ static int __pyx_m_traverse(PyObject *m, visitproc visit, void *arg) {
 #define __pyx_codeobj__5 __pyx_mstate_global->__pyx_codeobj__5
 #define __pyx_codeobj__6 __pyx_mstate_global->__pyx_codeobj__6
 #define __pyx_codeobj__7 __pyx_mstate_global->__pyx_codeobj__7
+#define __pyx_codeobj__8 __pyx_mstate_global->__pyx_codeobj__8
 /* #### Code section: module_code ### */
 
 /* "cythonfn.pyx":9
@@ -3001,6 +3011,7 @@ static PyObject *__pyx_pf_8cythonfn_8triad(CYTHON_UNUSED PyObject *__pyx_self, i
  * def triad(int array_size):
  *     for j in range(array_size):             # <<<<<<<<<<<<<<
  *         a[j] = b[j] + scalar * c[j]
+ * 
  */
   __pyx_t_1 = __pyx_v_array_size;
   __pyx_t_2 = __pyx_t_1;
@@ -3011,6 +3022,8 @@ static PyObject *__pyx_pf_8cythonfn_8triad(CYTHON_UNUSED PyObject *__pyx_self, i
  * def triad(int array_size):
  *     for j in range(array_size):
  *         a[j] = b[j] + scalar * c[j]             # <<<<<<<<<<<<<<
+ * 
+ * def free_arrays():
  */
     (__pyx_v_8cythonfn_a[__pyx_v_j]) = ((__pyx_v_8cythonfn_b[__pyx_v_j]) + (__pyx_v_8cythonfn_scalar * (__pyx_v_8cythonfn_c[__pyx_v_j])));
   }
@@ -3021,6 +3034,75 @@ static PyObject *__pyx_pf_8cythonfn_8triad(CYTHON_UNUSED PyObject *__pyx_self, i
  * def triad(int array_size):             # <<<<<<<<<<<<<<
  *     for j in range(array_size):
  *         a[j] = b[j] + scalar * c[j]
+ */
+
+  /* function exit code */
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "cythonfn.pyx":37
+ *         a[j] = b[j] + scalar * c[j]
+ * 
+ * def free_arrays():             # <<<<<<<<<<<<<<
+ *     """ free memory allocated for arrays"""
+ *     free(a)
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_8cythonfn_11free_arrays(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused); /*proto*/
+PyDoc_STRVAR(__pyx_doc_8cythonfn_10free_arrays, " free memory allocated for arrays");
+static PyMethodDef __pyx_mdef_8cythonfn_11free_arrays = {"free_arrays", (PyCFunction)__pyx_pw_8cythonfn_11free_arrays, METH_NOARGS, __pyx_doc_8cythonfn_10free_arrays};
+static PyObject *__pyx_pw_8cythonfn_11free_arrays(PyObject *__pyx_self, CYTHON_UNUSED PyObject *unused) {
+  CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("free_arrays (wrapper)", 0);
+  __pyx_kwvalues = __Pyx_KwValues_VARARGS(__pyx_args, __pyx_nargs);
+  __pyx_r = __pyx_pf_8cythonfn_10free_arrays(__pyx_self);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_8cythonfn_10free_arrays(CYTHON_UNUSED PyObject *__pyx_self) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("free_arrays", 1);
+
+  /* "cythonfn.pyx":39
+ * def free_arrays():
+ *     """ free memory allocated for arrays"""
+ *     free(a)             # <<<<<<<<<<<<<<
+ *     free(b)
+ *     free(c)
+ */
+  free(__pyx_v_8cythonfn_a);
+
+  /* "cythonfn.pyx":40
+ *     """ free memory allocated for arrays"""
+ *     free(a)
+ *     free(b)             # <<<<<<<<<<<<<<
+ *     free(c)
+ */
+  free(__pyx_v_8cythonfn_b);
+
+  /* "cythonfn.pyx":41
+ *     free(a)
+ *     free(b)
+ *     free(c)             # <<<<<<<<<<<<<<
+ */
+  free(__pyx_v_8cythonfn_c);
+
+  /* "cythonfn.pyx":37
+ *         a[j] = b[j] + scalar * c[j]
+ * 
+ * def free_arrays():             # <<<<<<<<<<<<<<
+ *     """ free memory allocated for arrays"""
+ *     free(a)
  */
 
   /* function exit code */
@@ -3046,7 +3128,7 @@ static PyMethodDef __pyx_methods[] = {
 
 static int __Pyx_CreateStringTabAndInitStrings(void) {
   __Pyx_StringTabEntry __pyx_string_tab[] = {
-    {&__pyx_n_s__8, __pyx_k__8, sizeof(__pyx_k__8), 0, 0, 1, 1},
+    {&__pyx_n_s__9, __pyx_k__9, sizeof(__pyx_k__9), 0, 0, 1, 1},
     {&__pyx_n_s_a, __pyx_k_a, sizeof(__pyx_k_a), 0, 0, 1, 1},
     {&__pyx_n_s_array_size, __pyx_k_array_size, sizeof(__pyx_k_array_size), 0, 0, 1, 1},
     {&__pyx_n_s_asyncio_coroutines, __pyx_k_asyncio_coroutines, sizeof(__pyx_k_asyncio_coroutines), 0, 0, 1, 1},
@@ -3056,6 +3138,7 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
     {&__pyx_n_s_copy, __pyx_k_copy, sizeof(__pyx_k_copy), 0, 0, 1, 1},
     {&__pyx_n_s_cythonfn, __pyx_k_cythonfn, sizeof(__pyx_k_cythonfn), 0, 0, 1, 1},
     {&__pyx_kp_s_cythonfn_pyx, __pyx_k_cythonfn_pyx, sizeof(__pyx_k_cythonfn_pyx), 0, 0, 1, 0},
+    {&__pyx_n_s_free_arrays, __pyx_k_free_arrays, sizeof(__pyx_k_free_arrays), 0, 0, 1, 1},
     {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
     {&__pyx_n_s_init_arrays, __pyx_k_init_arrays, sizeof(__pyx_k_init_arrays), 0, 0, 1, 1},
     {&__pyx_n_s_is_coroutine, __pyx_k_is_coroutine, sizeof(__pyx_k_is_coroutine), 0, 0, 1, 1},
@@ -3134,6 +3217,15 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  *         a[j] = b[j] + scalar * c[j]
  */
   __pyx_codeobj__7 = (PyObject*)__Pyx_PyCode_New(1, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cythonfn_pyx, __pyx_n_s_triad, 33, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__7)) __PYX_ERR(0, 33, __pyx_L1_error)
+
+  /* "cythonfn.pyx":37
+ *         a[j] = b[j] + scalar * c[j]
+ * 
+ * def free_arrays():             # <<<<<<<<<<<<<<
+ *     """ free memory allocated for arrays"""
+ *     free(a)
+ */
+  __pyx_codeobj__8 = (PyObject*)__Pyx_PyCode_New(0, 0, 0, 0, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cythonfn_pyx, __pyx_n_s_free_arrays, 37, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__8)) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -3564,6 +3656,18 @@ if (!__Pyx_RefNanny) {
   __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8cythonfn_9triad, 0, __pyx_n_s_triad, NULL, __pyx_n_s_cythonfn, __pyx_d, ((PyObject *)__pyx_codeobj__7)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 33, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_triad, __pyx_t_2) < 0) __PYX_ERR(0, 33, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+  /* "cythonfn.pyx":37
+ *         a[j] = b[j] + scalar * c[j]
+ * 
+ * def free_arrays():             # <<<<<<<<<<<<<<
+ *     """ free memory allocated for arrays"""
+ *     free(a)
+ */
+  __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_8cythonfn_11free_arrays, 0, __pyx_n_s_free_arrays, NULL, __pyx_n_s_cythonfn, __pyx_d, ((PyObject *)__pyx_codeobj__8)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 37, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_free_arrays, __pyx_t_2) < 0) __PYX_ERR(0, 37, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
   /* "cythonfn.pyx":1
@@ -6186,7 +6290,7 @@ __Pyx_PyType_GetName(PyTypeObject* tp)
     if (unlikely(name == NULL) || unlikely(!PyUnicode_Check(name))) {
         PyErr_Clear();
         Py_XDECREF(name);
-        name = __Pyx_NewRef(__pyx_n_s__8);
+        name = __Pyx_NewRef(__pyx_n_s__9);
     }
     return name;
 }

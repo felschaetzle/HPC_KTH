@@ -33,3 +33,9 @@ def scale(int array_size):
 def triad(int array_size):
     for j in range(array_size):
         a[j] = b[j] + scalar * c[j]
+
+def free_arrays():
+    """ free memory allocated for arrays"""
+    free(a)
+    free(b)
+    free(c)
