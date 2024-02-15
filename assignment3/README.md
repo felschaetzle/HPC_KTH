@@ -1,0 +1,1 @@
+The results of task 1 are in the "Task1" directory. The results of task 2 are split up into two notebooks located in "Task2", 2.1 - 2.4 are solved in task2.ipynb and 2.5 - 2.8 are in task2_colab.ipynb.
