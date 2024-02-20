@@ -158,6 +158,8 @@ Js_test = np.array([])
 
 def callbackF(input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, test, test_label, theta_k):
 	""" Calculate some stats per iteration and update plot """
+	plot = False
+
 	global N_iter
 	global J_min
 	global theta_best
@@ -184,8 +186,8 @@ def callbackF(input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, test
 		J_min = J_test
 	# Update Plot
 	iters = np.arange(len(Js_train))
-	plt.clf()
-	plt.subplot(2,1,1)
+	if(plot): plt.clf()
+	if(plot): plt.subplot(2,1,1)
 	im_size = 32
 	pad = 4
 	galaxies_image = np.zeros((3*im_size,6*im_size+2*pad), dtype=int) + 255
@@ -201,17 +203,19 @@ def callbackF(input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, test
 			plt.text(jj+2, ii+10, my_label, color=my_color)
 			if (y_pred[idx]==y[idx]):
 				plt.text(jj+4, ii+25, "✓", color='blue', fontsize=50)
-	plt.imshow(galaxies_image, cmap='gray')
-	plt.gca().axis('off')
-	plt.subplot(2,1,2)
-	plt.plot(iters, Js_test, 'r', label='test')
-	plt.plot(iters, Js_train, 'b', label='train')
-	plt.xlabel("iteration")
-	plt.ylabel("cost")
-	plt.xlim(0,600)
-	plt.ylim(1,2.1)
-	plt.gca().legend()
-	plt.pause(0.001)
+	
+	if(plot):
+		plt.imshow(galaxies_image, cmap='gray')
+		plt.gca().axis('off')
+		plt.subplot(2,1,2)
+		plt.plot(iters, Js_test, 'r', label='test')
+		plt.plot(iters, Js_train, 'b', label='train')
+		plt.xlabel("iteration")
+		plt.ylabel("cost")
+		plt.xlim(0,600)
+		plt.ylim(1,2.1)
+		plt.gca().legend()
+		plt.pause(0.001)
 
 
 def main():
@@ -262,7 +266,7 @@ def main():
 	Js_test = np.array([J_test])
 
 	# prep figure
-	fig = plt.figure(figsize=(6,6), dpi=80)
+	#fig = plt.figure(figsize=(6,6), dpi=80)
 
 	# Minimize the cost function using a nonlinear conjugate gradient algorithm
 	args = (input_layer_size, hidden_layer_size, num_labels, X, y, lmbda)  # parameter values
@@ -281,8 +285,8 @@ def main():
 	print('accuracy on test set =', np.sum(1.*(test_pred==test_label))/len(test_label))	
 			
 	# Save figure
-	plt.savefig('artificialneuralnetwork.png',dpi=240)
-	plt.show()
+	#plt.savefig('artificialneuralnetwork.png',dpi=240)
+	#plt.show()
 	    
 	return 0
 
