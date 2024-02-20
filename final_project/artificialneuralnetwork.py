@@ -184,27 +184,28 @@ def callbackF(input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, test
 	if (J_test < J_min):
 		theta_best = theta_k
 		J_min = J_test
+
 	# Update Plot
-	iters = np.arange(len(Js_train))
-	if(plot): plt.clf()
-	if(plot): plt.subplot(2,1,1)
-	im_size = 32
-	pad = 4
-	galaxies_image = np.zeros((3*im_size,6*im_size+2*pad), dtype=int) + 255
-	for i in range(3):
-		for j in range(6):
-			idx = 3*j + i + 900*(j>1) + 900*(j>3) + (N_iter % 600) # +10
-			shift = 0 + pad*(j>1) + pad*(j>3)
-			ii = i * im_size
-			jj = j * im_size + shift
-			galaxies_image[ii:ii+im_size,jj:jj+im_size] = X[idx].reshape(im_size,im_size) * 255
-			my_label = 'E' if y_pred[idx]==0 else 'S' if y_pred[idx]==1 else 'I'
-			my_color = 'blue' if (y_pred[idx]==y[idx]) else 'red'
-			plt.text(jj+2, ii+10, my_label, color=my_color)
-			if (y_pred[idx]==y[idx]):
-				plt.text(jj+4, ii+25, "✓", color='blue', fontsize=50)
-	
-	if(plot):
+	if(plot): 
+		iters = np.arange(len(Js_train))
+		plt.clf()
+		plt.subplot(2,1,1)
+		im_size = 32
+		pad = 4
+		galaxies_image = np.zeros((3*im_size,6*im_size+2*pad), dtype=int) + 255
+		for i in range(3):
+			for j in range(6):
+				idx = 3*j + i + 900*(j>1) + 900*(j>3) + (N_iter % 600) # +10
+				shift = 0 + pad*(j>1) + pad*(j>3)
+				ii = i * im_size
+				jj = j * im_size + shift
+				galaxies_image[ii:ii+im_size,jj:jj+im_size] = X[idx].reshape(im_size,im_size) * 255
+				my_label = 'E' if y_pred[idx]==0 else 'S' if y_pred[idx]==1 else 'I'
+				my_color = 'blue' if (y_pred[idx]==y[idx]) else 'red'
+				plt.text(jj+2, ii+10, my_label, color=my_color)
+				if (y_pred[idx]==y[idx]):
+					plt.text(jj+4, ii+25, "✓", color='blue', fontsize=50)
+		
 		plt.imshow(galaxies_image, cmap='gray')
 		plt.gca().axis('off')
 		plt.subplot(2,1,2)
