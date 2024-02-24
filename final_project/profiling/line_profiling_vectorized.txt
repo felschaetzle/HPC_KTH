@@ -1,0 +1,254 @@
+Timer unit: 1e-06 s
+
+Total time: 0.01642 s
+File: artificialneuralnetwork.py
+Function: g at line 15
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    15                                           @profile
+    16                                           def g(x):
+    17                                           	""" sigmoid function """
+    18       190      16420.0     86.4    100.0  	return 1.0 / (1.0 + np.exp(-x))
+
+Total time: 0.002986 s
+File: artificialneuralnetwork.py
+Function: grad_g at line 20
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    20                                           @profile
+    21                                           def grad_g(x):
+    22                                           	""" gradient of sigmoid function """
+    23        20       2471.0    123.5     82.8  	gx = g(x)
+    24        20        515.0     25.8     17.2  	return gx * (1.0 - gx)
+
+Total time: 0.098917 s
+File: artificialneuralnetwork.py
+Function: predict at line 26
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    26                                           @profile
+    27                                           def predict(Theta1, Theta2, X):
+    28                                           	""" Predict labels in a trained three layer classification network.
+    29                                           	Input:
+    30                                           	  Theta1       trained weights applied to 1st layer (hidden_layer_size x input_layer_size+1)
+    31                                           	  Theta2       trained weights applied to 2nd layer (num_labels x hidden_layer_size+1)
+    32                                           	  X            matrix of training data      (m x input_layer_size)
+    33                                           	Output:     
+    34                                           	  prediction   label prediction
+    35                                           	"""
+    36                                           	
+    37        23         63.0      2.7      0.1  	m = np.shape(X)[0]                    # number of training values
+    38        23         28.0      1.2      0.0  	num_labels = np.shape(Theta2)[0]
+    39                                           	
+    40        23      35927.0   1562.0     36.3  	a1 = np.hstack((np.ones((m,1)), X))   # add bias (input layer)
+    41        23      60293.0   2621.4     61.0  	a2 = g(a1 @ Theta1.T)                 # apply sigmoid: input layer --> hidden layer
+    42        23        729.0     31.7      0.7  	a2 = np.hstack((np.ones((m,1)), a2))  # add bias (hidden layer)
+    43        23       1339.0     58.2      1.4  	a3 = g(a2 @ Theta2.T)                 # apply sigmoid: hidden layer --> output layer
+    44                                           	
+    45        23        534.0     23.2      0.5  	prediction = np.argmax(a3,1).reshape((m,1))
+    46        23          4.0      0.2      0.0  	return prediction
+
+Total time: 0.202568 s
+File: artificialneuralnetwork.py
+Function: gradient at line 95
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    95                                           @profile
+    96                                           def gradient(theta, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, a1):
+    97                                           	""" Neural net cost function gradient for a three layer classification network.
+    98                                           	Input:
+    99                                           	  theta               flattened vector of neural net model parameters
+   100                                           	  input_layer_size    size of input layer
+   101                                           	  hidden_layer_size   size of hidden layer
+   102                                           	  num_labels          number of labels
+   103                                           	  X                   matrix of training data
+   104                                           	  y                   vector of training labels
+   105                                           	  lmbda               regularization term
+   106                                           	Output:
+   107                                           	  grad                flattened vector of derivatives of the neural network 
+   108                                           	"""
+   109                                           	
+   110                                           	# unflatten theta
+   111        20         50.0      2.5      0.0  	Theta1, Theta2 = reshape(theta, input_layer_size, hidden_layer_size, num_labels)
+   112                                           	
+   113                                           	# number of training values
+   114        20         10.0      0.5      0.0  	m = len(y)
+   115                                           	
+   116                                           	# Backpropagation: calculate the gradients Theta1_grad and Theta2_grad:
+   117                                           
+   118        20      47752.0   2387.6     23.6  	a1 = np.hstack((np.ones((m,1)), X))
+   119        20      71670.0   3583.5     35.4  	z2 = a1 @ Theta1.T
+   120        20       2789.0    139.4      1.4  	a2 = g(z2)
+   121        20        716.0     35.8      0.4  	a2 = np.hstack((np.ones((m,1)), a2))
+   122        20       1767.0     88.3      0.9  	a3 = g(a2 @ Theta2.T)
+   123                                               
+   124                                               # Compute errors
+   125        20       1112.0     55.6      0.5  	y_k = np.eye(num_labels)[y.flatten().astype(int)]
+   126        20         73.0      3.6      0.0  	delta3 = a3 - y_k
+   127        20       3858.0    192.9      1.9  	delta2 = (delta3 @ Theta2[:, 1:]) * grad_g(z2)
+   128                                               
+   129                                               # Compute gradients
+   130        20      70777.0   3538.8     34.9  	Delta1 = delta2.T @ a1
+   131        20        505.0     25.2      0.2  	Delta2 = delta3.T @ a2
+   132                                           
+   133        20        105.0      5.2      0.1  	Theta1_grad = Delta1 / m
+   134        20         33.0      1.6      0.0  	Theta2_grad = Delta2 / m
+   135                                           
+   136                                           	# add regularization
+   137        20        973.0     48.6      0.5  	Theta1_grad[:,1:] += (lmbda/m) * Theta1[:,1:]	
+   138        20         95.0      4.8      0.0  	Theta2_grad[:,1:] += (lmbda/m) * Theta2[:,1:]
+   139                                           
+   140                                           	# flatten gradients
+   141        20        280.0     14.0      0.1  	grad = np.concatenate((Theta1_grad.flatten(), Theta2_grad.flatten()))
+   142                                           
+   143        20          3.0      0.1      0.0  	return grad
+
+Total time: 1.21746 s
+File: artificialneuralnetwork.py
+Function: callbackF at line 152
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   152                                           @profile
+   153                                           def callbackF(input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, test, test_label, a1_train, a1_test, theta_k):
+   154                                           	""" Calculate some stats per iteration and update plot """
+   155                                           	global N_iter
+   156                                           	global J_min
+   157                                           	global theta_best
+   158                                           	global Js_train
+   159                                           	global Js_test
+   160                                           	# unflatten theta
+   161        10         27.0      2.7      0.0  	Theta1, Theta2 = reshape(theta_k, input_layer_size, hidden_layer_size, num_labels)
+   162                                           	# training data stats
+   163        10      65410.0   6541.0      5.4  	J = cost_function(theta_k, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, a1_train)
+   164        10      67357.0   6735.7      5.5  	y_pred = predict(Theta1, Theta2, X)
+   165        10        361.0     36.1      0.0  	accuracy = np.sum(1.*(y_pred==y))/len(y)
+   166        10        167.0     16.7      0.0  	Js_train = np.append(Js_train, J)
+   167                                           	# test data stats
+   168        10      12858.0   1285.8      1.1  	J_test = cost_function(theta_k, input_layer_size, hidden_layer_size, num_labels, test, test_label, lmbda, a1_test)
+   169        10      17918.0   1791.8      1.5  	test_pred = predict(Theta1, Theta2, test)
+   170        10        166.0     16.6      0.0  	accuracy_test = np.sum(1.*(test_pred==test_label))/len(test_label)
+   171        10        119.0     11.9      0.0  	Js_test= np.append(Js_test, J_test)
+   172                                           	# print stats
+   173        10        313.0     31.3      0.0  	print('iter={:3d}:  Jtrain= {:0.4f} acc= {:0.2f}%  |  Jtest= {:0.4f} acc= {:0.2f}%'.format(N_iter, J, 100*accuracy, J_test, 100*accuracy_test))
+   174        10          7.0      0.7      0.0  	N_iter += 1
+   175                                           	# Update theta_best
+   176        10          4.0      0.4      0.0  	if (J_test < J_min):
+   177        10          8.0      0.8      0.0  		theta_best = theta_k
+   178        10          1.0      0.1      0.0  		J_min = J_test
+   179                                           	# Update Plot
+   180        10         39.0      3.9      0.0  	iters = np.arange(len(Js_train))
+   181        10     305096.0  30509.6     25.1  	plt.clf()
+   182        10     126922.0  12692.2     10.4  	plt.subplot(2,1,1)
+   183        10          5.0      0.5      0.0  	im_size = 32
+   184        10          3.0      0.3      0.0  	pad = 4
+   185        10        369.0     36.9      0.0  	galaxies_image = np.zeros((3*im_size,6*im_size+2*pad), dtype=int) + 255
+   186        40         22.0      0.6      0.0  	for i in range(3):
+   187       210         72.0      0.3      0.0  		for j in range(6):
+   188       180        138.0      0.8      0.0  			idx = 3*j + i + 900*(j>1) + 900*(j>3) + (N_iter % 600) # +10
+   189       180         74.0      0.4      0.0  			shift = 0 + pad*(j>1) + pad*(j>3)
+   190       180         64.0      0.4      0.0  			ii = i * im_size
+   191       180         52.0      0.3      0.0  			jj = j * im_size + shift
+   192       180        793.0      4.4      0.1  			galaxies_image[ii:ii+im_size,jj:jj+im_size] = X[idx].reshape(im_size,im_size) * 255
+   193       180        355.0      2.0      0.0  			my_label = 'E' if y_pred[idx]==0 else 'S' if y_pred[idx]==1 else 'I'
+   194       180        236.0      1.3      0.0  			my_color = 'blue' if (y_pred[idx]==y[idx]) else 'red'
+   195       180      25130.0    139.6      2.1  			plt.text(jj+2, ii+10, my_label, color=my_color)
+   196       180        331.0      1.8      0.0  			if (y_pred[idx]==y[idx]):
+   197        62       8897.0    143.5      0.7  				plt.text(jj+4, ii+25, "✓", color='blue', fontsize=50)
+   198        10       6274.0    627.4      0.5  	plt.imshow(galaxies_image, cmap='gray')
+   199        10        273.0     27.3      0.0  	plt.gca().axis('off')
+   200        10     105751.0  10575.1      8.7  	plt.subplot(2,1,2)
+   201        10       3771.0    377.1      0.3  	plt.plot(iters, Js_test, 'r', label='test')
+   202        10       3203.0    320.3      0.3  	plt.plot(iters, Js_train, 'b', label='train')
+   203        10        423.0     42.3      0.0  	plt.xlabel("iteration")
+   204        10        335.0     33.5      0.0  	plt.ylabel("cost")
+   205        10       3750.0    375.0      0.3  	plt.xlim(0,600)
+   206        10        606.0     60.6      0.0  	plt.ylim(1,2.1)
+   207        10      13092.0   1309.2      1.1  	plt.gca().legend()
+   208        10     446669.0  44666.9     36.7  	plt.pause(0.001)
+
+Total time: 7.57602 s
+File: artificialneuralnetwork.py
+Function: main at line 210
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   210                                           @profile
+   211                                           def main():
+   212                                           	""" Artificial Neural Network for classifying galaxies """
+   213                                           	
+   214                                           	# set the random number generator seed
+   215         1         16.0     16.0      0.0  	np.random.seed(917)
+   216                                           	
+   217                                           	# Load the training and test datasets
+   218         1    1476813.0    1e+06     19.5  	train = np.genfromtxt('train.csv', delimiter=',')
+   219         1     372281.0 372281.0      4.9  	test = np.genfromtxt('test.csv', delimiter=',')
+   220                                           	
+   221                                           	# get labels (0=Elliptical, 1=Spiral, 2=Irregular)
+   222         1         11.0     11.0      0.0  	train_label = train[:,0].reshape(len(train),1)
+   223         1          1.0      1.0      0.0  	test_label = test[:,0].reshape(len(test),1)
+   224                                           	
+   225                                           	# normalize image data to [0,1]
+   226         1       4636.0   4636.0      0.1  	train = train[:,1:] / 255.
+   227         1       1148.0   1148.0      0.0  	test = test[:,1:] / 255.
+   228                                           	
+   229                                           	# Construct our data matrix X (2700 x 5000)
+   230         1          0.0      0.0      0.0  	X = train
+   231                                           
+   232                                               # Construct our label vector y (2700 x 1)
+   233         1          0.0      0.0      0.0  	y = train_label
+   234                                           	
+   235                                           	# Two layer Neural Network parameters:
+   236         1         22.0     22.0      0.0  	m = np.shape(X)[0]
+   237         1          3.0      3.0      0.0  	input_layer_size = np.shape(X)[1]
+   238         1          0.0      0.0      0.0  	hidden_layer_size = 8
+   239         1          0.0      0.0      0.0  	num_labels = 3
+   240         1          0.0      0.0      0.0  	lmbda = 1.0    # regularization parameter
+   241                                               
+   242         1       3808.0   3808.0      0.1  	a1_train = np.hstack((np.ones((m,1)), X)) 
+   243         1        991.0    991.0      0.0  	a1_test = np.hstack((np.ones((np.shape(test)[0],1)), test)) 
+   244                                           	
+   245                                           	# Initialize random weights:
+   246         1         84.0     84.0      0.0  	Theta1 = np.random.rand(hidden_layer_size, input_layer_size+1) * 0.4 - 0.2
+   247         1          9.0      9.0      0.0  	Theta2 = np.random.rand(num_labels, hidden_layer_size+1) * 0.4 - 0.2
+   248                                           	
+   249                                           	# flattened initial guess
+   250         1         30.0     30.0      0.0  	theta0 = np.concatenate((Theta1.flatten(), Theta2.flatten()))
+   251         1       9815.0   9815.0      0.1  	J = cost_function(theta0, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, a1_train)
+   252         1         26.0     26.0      0.0  	print('initial cost function J =', J)
+   253         1       6731.0   6731.0      0.1  	train_pred = predict(Theta1, Theta2, train)
+   254         1        120.0    120.0      0.0  	print('initial accuracy on training set =', np.sum(1.*(train_pred==train_label))/len(train_label))
+   255                                           	global Js_train
+   256                                           	global Js_test
+   257         1          6.0      6.0      0.0  	Js_train = np.array([J])
+   258         1       1169.0   1169.0      0.0  	J_test = cost_function(theta0, input_layer_size, hidden_layer_size, num_labels, test, test_label, lmbda, a1_test)
+   259         1          3.0      3.0      0.0  	Js_test = np.array([J_test])
+   260                                           
+   261                                           	# prep figure
+   262         1     146091.0 146091.0      1.9  	fig = plt.figure(figsize=(6,6), dpi=80)
+   263                                           
+   264                                           	# Minimize the cost function using a nonlinear conjugate gradient algorithm
+   265         1          0.0      0.0      0.0  	args = (input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, a1_train)  # parameter values
+   266         1          1.0      1.0      0.0  	cbf = partial(callbackF, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, test, test_label,a1_train,a1_test)
+   267         1    1510362.0    2e+06     19.9  	theta = optimize.fmin_cg(cost_function, theta0, fprime=gradient, args=args, callback=cbf, maxiter=10)
+   268                                           
+   269                                           	# unflatten theta
+   270         1          4.0      4.0      0.0  	Theta1, Theta2 = reshape(theta_best, input_layer_size, hidden_layer_size, num_labels)
+   271                                           	
+   272                                           	# Make predictions for the training and test sets
+   273         1       5287.0   5287.0      0.1  	train_pred = predict(Theta1, Theta2, train)
+   274         1       5213.0   5213.0      0.1  	test_pred = predict(Theta1, Theta2, test)
+   275                                           	
+   276                                           	# Print accuracy of predictions
+   277         1         57.0     57.0      0.0  	print('accuracy on training set =', np.sum(1.*(train_pred==train_label))/len(train_label))
+   278         1         22.0     22.0      0.0  	print('accuracy on test set =', np.sum(1.*(test_pred==test_label))/len(test_label))	
+   279                                           			
+   280                                           	# Save figure
+   281         1     118102.0 118102.0      1.6  	plt.savefig('artificialneuralnetwork.png',dpi=240)
+   282         1    3913154.0    4e+06     51.7  	plt.show()
+   283                                           	    
+   284         1          0.0      0.0      0.0  	return 0
