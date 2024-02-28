@@ -12,17 +12,18 @@ Create and train your own artificial neural network to classify images of galaxi
 
 """
 
+# @profile
 def g(x):
 	""" sigmoid function """
 	return 1.0 / (1.0 + np.exp(-x))
 
-
+# @profile
 def grad_g(x):
 	""" gradient of sigmoid function """
 	gx = g(x)
-	return gx * (1.0 - gx)	
+	return gx * (1.0 - gx)
 
-
+# @profile
 def predict(Theta1, Theta2, X):
 	""" Predict labels in a trained three layer classification network.
 	Input:
@@ -44,7 +45,7 @@ def predict(Theta1, Theta2, X):
 	prediction = np.argmax(a3,1).reshape((m,1))
 	return prediction
 
-
+# @profile
 def reshape(theta, input_layer_size, hidden_layer_size, num_labels):
 	""" reshape theta into Theta1 and Theta2, the weights of our neural network """
 	ncut = hidden_layer_size * (input_layer_size+1)
@@ -52,8 +53,8 @@ def reshape(theta, input_layer_size, hidden_layer_size, num_labels):
 	Theta2 = theta[ncut:].reshape(num_labels, hidden_layer_size+1)
 	return Theta1, Theta2
 	
-	
-def cost_function(theta, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda):
+# @profile
+def cost_function(theta, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, a1):
 	""" Neural net cost function for a three layer classification network.
 	Input:
 	  theta               flattened vector of neural net model parameters
@@ -74,8 +75,7 @@ def cost_function(theta, input_layer_size, hidden_layer_size, num_labels, X, y, 
 	m = len(y)
 	
 	# Feedforward: calculate the cost function J:
-	
-	a1 = np.hstack((np.ones((m,1)), X))   
+	  
 	a2 = g(a1 @ Theta1.T)                 
 	a2 = np.hstack((np.ones((m,1)), a2))  
 	a3 = g(a2 @ Theta2.T)                 
@@ -92,8 +92,8 @@ def cost_function(theta, input_layer_size, hidden_layer_size, num_labels, X, y, 
 	
 	return J
 
-
-def gradient(theta, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda):
+# @profile
+def gradient(theta, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, a1):
 	""" Neural net cost function gradient for a three layer classification network.
 	Input:
 	  theta               flattened vector of neural net model parameters
@@ -114,29 +114,21 @@ def gradient(theta, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda
 	m = len(y)
 	
 	# Backpropagation: calculate the gradients Theta1_grad and Theta2_grad:
-	
-	Delta1 = np.zeros((hidden_layer_size,input_layer_size+1))
-	Delta2 = np.zeros((num_labels,hidden_layer_size+1))
 
-	for t in range(m):
-		
-		# forward
-		a1 = X[t,:].reshape((input_layer_size,1))
-		a1 = np.vstack((1, a1))   #  +bias
-		z2 = Theta1 @ a1
-		a2 = g(z2)
-		a2 = np.vstack((1, a2))   #  +bias
-		a3 = g(Theta2 @ a2)
-		
-		# compute error for layer 3
-		y_k = np.zeros((num_labels,1))
-		y_k[y[t,0].astype(int)] = 1
-		delta3 = a3 - y_k
-		Delta2 += (delta3 @ a2.T)
-		
-		# compute error for layer 2
-		delta2 = (Theta2[:,1:].T @ delta3) * grad_g(z2)
-		Delta1 += (delta2 @ a1.T)	
+	a1 = np.hstack((np.ones((m,1)), X))
+	z2 = a1 @ Theta1.T
+	a2 = g(z2)
+	a2 = np.hstack((np.ones((m,1)), a2))
+	a3 = g(a2 @ Theta2.T)
+    
+    # Compute errors
+	y_k = np.eye(num_labels)[y.flatten().astype(int)]
+	delta3 = a3 - y_k
+	delta2 = (delta3 @ Theta2[:, 1:]) * grad_g(z2)
+    
+    # Compute gradients
+	Delta1 = delta2.T @ a1
+	Delta2 = delta3.T @ a2
 
 	Theta1_grad = Delta1 / m
 	Theta2_grad = Delta2 / m
@@ -157,7 +149,8 @@ theta_best = []
 Js_train = np.array([])
 Js_test = np.array([])
 
-def callbackF(input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, test, test_label, theta_k):
+# @profile
+def callbackF(input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, test, test_label, a1_train, a1_test, theta_k):
 	""" Calculate some stats per iteration and update plot """
 	global N_iter
 	global J_min
@@ -167,12 +160,12 @@ def callbackF(input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, test
 	# unflatten theta
 	Theta1, Theta2 = reshape(theta_k, input_layer_size, hidden_layer_size, num_labels)
 	# training data stats
-	J = cost_function(theta_k, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda)
+	J = cost_function(theta_k, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, a1_train)
 	y_pred = predict(Theta1, Theta2, X)
 	accuracy = np.sum(1.*(y_pred==y))/len(y)
 	Js_train = np.append(Js_train, J)
 	# test data stats
-	J_test = cost_function(theta_k, input_layer_size, hidden_layer_size, num_labels, test, test_label, lmbda)
+	J_test = cost_function(theta_k, input_layer_size, hidden_layer_size, num_labels, test, test_label, lmbda, a1_test)
 	test_pred = predict(Theta1, Theta2, test)
 	accuracy_test = np.sum(1.*(test_pred==test_label))/len(test_label)
 	Js_test= np.append(Js_test, J_test)
@@ -214,7 +207,7 @@ def callbackF(input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, test
 	plt.gca().legend()
 	plt.pause(0.001)
 
-
+# @profile
 def main():
 	""" Artificial Neural Network for classifying galaxies """
 	
@@ -245,6 +238,9 @@ def main():
 	hidden_layer_size = 8
 	num_labels = 3
 	lmbda = 1.0    # regularization parameter
+    
+	a1_train = np.hstack((np.ones((m,1)), X)) 
+	a1_test = np.hstack((np.ones((np.shape(test)[0],1)), test)) 
 	
 	# Initialize random weights:
 	Theta1 = np.random.rand(hidden_layer_size, input_layer_size+1) * 0.4 - 0.2
@@ -252,23 +248,23 @@ def main():
 	
 	# flattened initial guess
 	theta0 = np.concatenate((Theta1.flatten(), Theta2.flatten()))
-	J = cost_function(theta0, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda)
+	J = cost_function(theta0, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, a1_train)
 	print('initial cost function J =', J)
 	train_pred = predict(Theta1, Theta2, train)
 	print('initial accuracy on training set =', np.sum(1.*(train_pred==train_label))/len(train_label))
 	global Js_train
 	global Js_test
 	Js_train = np.array([J])
-	J_test = cost_function(theta0, input_layer_size, hidden_layer_size, num_labels, test, test_label, lmbda)
+	J_test = cost_function(theta0, input_layer_size, hidden_layer_size, num_labels, test, test_label, lmbda, a1_test)
 	Js_test = np.array([J_test])
 
 	# prep figure
 	fig = plt.figure(figsize=(6,6), dpi=80)
 
 	# Minimize the cost function using a nonlinear conjugate gradient algorithm
-	args = (input_layer_size, hidden_layer_size, num_labels, X, y, lmbda)  # parameter values
-	cbf = partial(callbackF, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, test, test_label)
-	theta = optimize.fmin_cg(cost_function, theta0, fprime=gradient, args=args, callback=cbf, maxiter=100)
+	args = (input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, a1_train)  # parameter values
+	cbf = partial(callbackF, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, test, test_label,a1_train,a1_test)
+	theta = optimize.fmin_cg(cost_function, theta0, fprime=gradient, args=args, callback=cbf, maxiter=10)
 
 	# unflatten theta
 	Theta1, Theta2 = reshape(theta_best, input_layer_size, hidden_layer_size, num_labels)
@@ -288,10 +284,9 @@ def main():
 	return 0
 
 
-
+t1 = timer()
 if __name__== "__main__":
-  t1 = timer()
   main()
-  t2 = timer()
-  print(f'Running time: {t2-t1} sec')
+t2 = timer()
+print(f'Running time: {t2-t1} sec')
 
