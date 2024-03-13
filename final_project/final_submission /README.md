@@ -3,12 +3,14 @@ Artificial Neural Network for Image Classification
 
 # Original code by Philip Mocz (2023)
 
-# Final Project by Thorben Fetz, Georgios Mitsos, Felix Schatzle for the course "Introduction to High Performance Computing" at KTH Royal Institute of Technology (2024)
-
 ### [📝 Read the Algorithm Write-up on Medium](https://philip-mocz.medium.com/create-your-own-artificial-neural-network-for-multi-class-classification-with-python-7011946af722)
 
-Create and train your own artificial neural network to classify images of galaxies from SDSS/the Galaxy Zoo project.
+]Create and train your own artificial neural network to classify images of galaxies from SDSS/the Galaxy Zoo project.
 Data used in this work is heavily modified and simplified from  the Galaxy Zoo 2 (Willett et al.,2013), MNRAS, 435, 2835.
+
+# Final Project by Thorben Fetz, Georgios Mitsos, Felix Schatzle (2024) 
+
+for the course "DD2358 Introduction to High Performance Computing" at KTH Royal Institute of Technology 
 
 # Initial code: artificialneuralnetwork.py
 
