@@ -3,6 +3,7 @@ import numpy as np
 from scipy import optimize
 from functools import partial
 from timeit import default_timer as timer
+import pandas as pd
 
 """
 Create Your Own Artificial Neural Network for Multi-class Classification (With Python)
@@ -215,8 +216,10 @@ def main():
 	np.random.seed(917)
 	
 	# Load the training and test datasets
-	train = np.genfromtxt('train.csv', delimiter=',')
-	test = np.genfromtxt('test.csv', delimiter=',')
+	temp_train = pd.read_csv('train.csv', delimiter=',',header=None)
+	temp_test = pd.read_csv('test.csv', delimiter=',',header=None)
+	train = temp_train.to_numpy(dtype='float64')
+	test = temp_test.to_numpy(dtype='float64')
 	
 	# get labels (0=Elliptical, 1=Spiral, 2=Irregular)
 	train_label = train[:,0].reshape(len(train),1)
@@ -264,7 +267,7 @@ def main():
 	# Minimize the cost function using a nonlinear conjugate gradient algorithm
 	args = (input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, a1_train)  # parameter values
 	cbf = partial(callbackF, input_layer_size, hidden_layer_size, num_labels, X, y, lmbda, test, test_label,a1_train,a1_test)
-	theta = optimize.fmin_cg(cost_function, theta0, fprime=gradient, args=args, callback=cbf, maxiter=10)
+	theta = optimize.fmin_cg(cost_function, theta0, fprime=gradient, args=args, callback=cbf, maxiter=600)
 
 	# unflatten theta
 	Theta1, Theta2 = reshape(theta_best, input_layer_size, hidden_layer_size, num_labels)
