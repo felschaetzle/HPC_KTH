@@ -3,6 +3,7 @@ import numpy as np
 from scipy import optimize
 from functools import partial
 from timeit import default_timer as timer
+import pandas as pd
 
 """
 Create Your Own Artificial Neural Network for Multi-class Classification (With Python)
@@ -215,8 +216,10 @@ def main():
 	np.random.seed(917)
 	
 	# Load the training and test datasets
-	train = np.genfromtxt('train.csv', delimiter=',')
-	test = np.genfromtxt('test.csv', delimiter=',')
+	temp_train = pd.read_csv('train.csv', delimiter=',',header=None)
+	temp_test = pd.read_csv('test.csv', delimiter=',',header=None)
+	train = temp_train.to_numpy(dtype='float64')
+	test = temp_test.to_numpy(dtype='float64')
 	
 	# get labels (0=Elliptical, 1=Spiral, 2=Irregular)
 	train_label = train[:,0].reshape(len(train),1)
