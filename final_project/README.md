@@ -28,6 +28,9 @@ The optimized code is: vectorized/artificialneuralnetwork_vectorized.py
 
 # GPU Optimization
 
+The two jupyter notebooks are placed in the "colab" folder. Import the notbooks to your Google Colab. To establish a runtim benchmark, run "ColabBenchmark.ipynb". This contains the original code.
+
+ "PyTorchOptimization.ipynb" contains both, our refactored neural network with the same architecture and the simplest possible PyTorch network. To train a network, deceide which model you want to use, and execute the according cell. Afterwards, the cell that contains the line "main()" executes to training process.
 
 # Documentation
 
